@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>
+        People with id...
+    </title>
+</head>
+<body>
+
+<p th:text="${person.getName() + ', ' + person.getYear_birth()}"/>
+<br/>
+<hr/>
+<a th:href="@{/people/{id}/update(id=${person.getId_person()})}">Изменить</a>
+
+</body>
+
+</html>
