@@ -29,14 +29,14 @@ public class BookController {
     }
 
     @GetMapping()
-    public String index(Model model){
+    public String index(Model model) {
         model.addAttribute("books", bookDAO.index());
         return "/books/index";
     }
 
     @GetMapping("/{id}")
     public String show(@PathVariable("id") int id_book,
-                       Model model, @ModelAttribute("person") Person person){
+                       Model model, @ModelAttribute("person") Person person) {
 
         model.addAttribute("book", bookDAO.show(id_book));
         model.addAttribute("people", personDAO.index());
@@ -45,14 +45,14 @@ public class BookController {
     }
 
     @GetMapping("/new")
-    public String newBook(Model model){
+    public String newBook(Model model) {
         model.addAttribute("book", new Book());
         return "/books/new";
     }
 
     @PostMapping()
     public String createBook(@ModelAttribute("book") @Valid Book book,
-                             BindingResult bindingResult){
+                             BindingResult bindingResult) {
 
         if (bindingResult.hasErrors())
             return "books/new";
@@ -62,15 +62,16 @@ public class BookController {
     }
 
     @GetMapping("/{id}/update")
-    public String pageEdit(Model model, @PathVariable("id") int id){
+    public String pageEdit(Model model, @PathVariable("id") int id) {
         model.addAttribute("book", bookDAO.show(id));
         return "/books/update";
     }
+
     // для изменения полей
     @PatchMapping("/{id}")
     public String update(@ModelAttribute("book") @Valid Book book,
                          BindingResult bindingResult,
-                         @PathVariable("id") int id){
+                         @PathVariable("id") int id) {
 
         if (bindingResult.hasErrors())
             return "books/update";
@@ -82,7 +83,7 @@ public class BookController {
     // appoint клиента
     @PatchMapping("/appoint/{id}")
     public String appoint(@ModelAttribute("id_person") Integer id_person,
-                              @PathVariable Integer id){
+                          @PathVariable Integer id) {
 
         System.out.println(id + " " + id_person);
         bookDAO.editClient(id, id_person);
@@ -90,11 +91,16 @@ public class BookController {
     }
 
     @PatchMapping("/free/{id}")
-    public String free(@PathVariable Integer id){
+    public String free(@PathVariable Integer id) {
 
         System.out.println(id);
         bookDAO.freeClient(id);
         return "redirect:/books";
     }
 
+    @PostMapping("/delete/{id}")
+    public String delete(@PathVariable("id") int id) {
+        bookDAO.delete(id);
+        return "redirect:/books";
+    }
 }

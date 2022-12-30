@@ -19,11 +19,11 @@ public class BookDAO {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<Book> index(){
+    public List<Book> index() {
         return jdbcTemplate.query("SELECT * FROM book", new BeanPropertyRowMapper<>(Book.class));
     }
 
-    public void createBook(Book book){
+    public void createBook(Book book) {
         jdbcTemplate.update("insert into book(name_book, year, author) values (?, ?, ?)",
                 book.getName_book(), book.getYear(), book.getAuthor());
     }
@@ -51,5 +51,9 @@ public class BookDAO {
     public List<Book> hasPerson(int id_person) {
         return jdbcTemplate.query("select * from book where id_person=?",
                 new Object[]{id_person}, new BeanPropertyRowMapper<>(Book.class));
+    }
+
+    public void delete(int id) {
+        jdbcTemplate.update("delete from book where id_book=?", id);
     }
 }

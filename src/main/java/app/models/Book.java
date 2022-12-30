@@ -1,12 +1,6 @@
 package app.models;
 
 
-
-
-import org.springframework.web.bind.annotation.PathVariable;
-
-import java.lang.invoke.DelegatingMethodHandle$Holder;
-import java.time.LocalDate;
 import javax.validation.constraints.*;
 
 
@@ -28,7 +22,6 @@ public class Book {
     @NotEmpty(message = "Имя не может быть пустым")
     @Size(min = 2, max = 50, message = "Слишком короткое или длинное ФИО")
     private String author;
-
 
     public Book(int id_book, Integer id_person, String name_book,  int year, String author) {
         this.id_book = id_book;
