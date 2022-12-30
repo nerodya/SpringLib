@@ -10,6 +10,13 @@
 <body>
 
 <p th:text="${person.getName() + ', ' + person.getYear_birth()}"/>
+
+<p th:if="${books.isEmpty()}">Человек пока не взял ни одной книги</p>
+
+<p th:unless="${books.isEmpty()}">Книги:</p>
+<div th:unless="${books.isEmpty()}" th:each="book : ${books}"
+   th:text="${book.name_book + ', ' + book.author + ', ' + book.year}"></div>
+
 <br/>
 <hr/>
 <a th:href="@{/people/{id}/update(id=${person.getId_person()})}">Изменить</a>

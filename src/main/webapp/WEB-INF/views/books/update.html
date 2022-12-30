@@ -4,11 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <title>
-        Create book
+        Create person
     </title>
 </head>
 <body>
-<form th:method="POST" th:action="@{/books}" th:object="${book}">
+
+<form th:method="PATCH" th:action="@{/books/{id}(id=${book.getId_book()})}" th:object="${book}">
     <label for="name_book">Введите название: </label>
     <input type="text" th:field="*{name_book}" id="name_book">
     <div style="color: red" th:if="${#fields.hasErrors('name_book')}" th:errors="*{name_book}">name_book error</div>
@@ -25,7 +26,7 @@
 
     <br/>
     <hr/>
-    <input type="submit" value="Создать!">
+    <input type="submit" value="Изменить!">
 </form>
 <br/>
 <hr/>

@@ -9,11 +9,31 @@
 </head>
 <body>
 
-<p th:text="${book.getName_book() + ', ' + book.getAuthor() + book.getYear()}"/>
+<p th:text="${book.getName_book() + ', ' + book.getAuthor() + ', ' + book.getYear()}"/>
+
+<!--="@{/books/edit_person/{id}(id=${book.getId_book()})}"-->
+<form th:method="PATCH" th:action="@{/books/appoint/{id}(id=${book.getId_book()})}"
+     th:if="${book.getId_person() == (null)}">
+    <p>Эта книга свободна. Кому назначить её?</p>
+    <label for="person">Веберите человека</label>
+        <select th:object="${person}" th:field="*{id_person}" id="person">
+            <option th:each="person : ${people}" th:value="${person.getId_person()}" th:text="${person.getName()}">
+            </option>
+        </select>
+        <input type="submit" value="Назначить!">
+
+</form>
+
+<form th:method="PATCH" th:action="@{/books/free/{id}(id=${book.getId_book()})}"
+      th:unless="${book.getId_person() == (null)}">
+    <p th:each="person : ${people}" th:text="'Книга сейчас у: ' + ${person.getName()}"
+    th:if="${person.id_person == book.getId_person()}"></p>
+    <input type="submit" value="Освободить книгу">
+</form>
+
 <br/>
 <hr/>
-<a th:href="@{/books/{id}/update(id=${book.getId_book()()})}">Изменить</a>
-
+<a th:href="@{/books/{id}/update(id=${book.getId_book()})}">Изменить</a>
 </body>
 
 </html>

@@ -1,22 +1,28 @@
 package app.controller;
 
 
+import app.dao.BookDAO;
 import app.dao.PersonDAO;
 import app.models.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/people")
 public class PersonController {
 
     private final PersonDAO personDAO;
+    private final BookDAO bookDAO;
 
     @Autowired
-    public PersonController(PersonDAO personDAO) {
+    public PersonController(PersonDAO personDAO, BookDAO bookDAO) {
         this.personDAO = personDAO;
+        this.bookDAO = bookDAO;
     }
 
 
@@ -29,6 +35,7 @@ public class PersonController {
     @GetMapping("/{id}")
     public String show(Model model, @PathVariable("id") int id_person){
         model.addAttribute("person", personDAO.show(id_person));
+        model.addAttribute("books", bookDAO.hasPerson(id_person));
         return "people/show";
     }
 
@@ -39,7 +46,12 @@ public class PersonController {
     }
 
     @PostMapping()
-    public String createPerson(@ModelAttribute("person") Person person){
+    public String createPerson(@ModelAttribute("person") @Valid Person person,
+                               BindingResult bindingResult){
+
+        if (bindingResult.hasErrors())
+                return "people/new";
+
         personDAO.createPerson(person);
         return "redirect:/people";
     }
@@ -52,8 +64,13 @@ public class PersonController {
     }
 
     @PatchMapping("/{id}")
-    public String edit(@ModelAttribute("person") Person person,
+    public String edit(@ModelAttribute("person") @Valid Person person,
+                       BindingResult bindingResult,
                        @PathVariable("id") int id){
+
+        if (bindingResult.hasErrors())
+            return "people/update";
+
         personDAO.update(person, id);
         return "redirect:/people";
     }

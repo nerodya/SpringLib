@@ -32,4 +32,24 @@ public class BookDAO {
         return jdbcTemplate.query("SELECT * FROM book where id_book=?", new Object[]{id_book}, new BeanPropertyRowMapper<>(Book.class))
                 .stream().findAny().orElse(null);
     }
+
+    public void edit(Book book, int id) {
+        jdbcTemplate.update("UPDATE book SET name_book=?, year=?, author=? WHERE id_book=?",
+                book.getName_book(), book.getYear(), book.getAuthor(), id);
+    }
+
+    public void editClient(int id_book, int id_person) {
+        jdbcTemplate.update("update book set id_person=? where id_book=?",
+                id_person, id_book);
+    }
+
+    public void freeClient(Integer id) {
+        jdbcTemplate.update("update book set id_person=null where id_book=?",
+                id);
+    }
+
+    public List<Book> hasPerson(int id_person) {
+        return jdbcTemplate.query("select * from book where id_person=?",
+                new Object[]{id_person}, new BeanPropertyRowMapper<>(Book.class));
+    }
 }

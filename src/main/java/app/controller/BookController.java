@@ -2,11 +2,17 @@ package app.controller;
 
 
 import app.dao.BookDAO;
+import app.dao.PersonDAO;
 import app.models.Book;
+import app.models.Person;
+import org.springframework.beans.BeanInfoFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 
 @Controller
@@ -14,10 +20,12 @@ import org.springframework.web.bind.annotation.*;
 public class BookController {
 
     private final BookDAO bookDAO;
+    private final PersonDAO personDAO;
 
     @Autowired
-    public BookController(BookDAO bookDAO) {
+    public BookController(BookDAO bookDAO, PersonDAO personDAO) {
         this.bookDAO = bookDAO;
+        this.personDAO = personDAO;
     }
 
     @GetMapping()
@@ -27,8 +35,12 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
-    public String show(Model model, @PathVariable("id") int id_book){
+    public String show(@PathVariable("id") int id_book,
+                       Model model, @ModelAttribute("person") Person person){
+
         model.addAttribute("book", bookDAO.show(id_book));
+        model.addAttribute("people", personDAO.index());
+
         return "/books/show";
     }
 
@@ -39,8 +51,50 @@ public class BookController {
     }
 
     @PostMapping()
-    public String createBook(@ModelAttribute("book") Book book){
+    public String createBook(@ModelAttribute("book") @Valid Book book,
+                             BindingResult bindingResult){
+
+        if (bindingResult.hasErrors())
+            return "books/new";
+
         bookDAO.createBook(book);
-        return "redirect:books";
+        return "redirect:/books";
     }
+
+    @GetMapping("/{id}/update")
+    public String pageEdit(Model model, @PathVariable("id") int id){
+        model.addAttribute("book", bookDAO.show(id));
+        return "/books/update";
+    }
+    // для изменения полей
+    @PatchMapping("/{id}")
+    public String update(@ModelAttribute("book") @Valid Book book,
+                         BindingResult bindingResult,
+                         @PathVariable("id") int id){
+
+        if (bindingResult.hasErrors())
+            return "books/update";
+
+        bookDAO.edit(book, id);
+        return "redirect:/books";
+    }
+
+    // appoint клиента
+    @PatchMapping("/appoint/{id}")
+    public String appoint(@ModelAttribute("id_person") Integer id_person,
+                              @PathVariable Integer id){
+
+        System.out.println(id + " " + id_person);
+        bookDAO.editClient(id, id_person);
+        return "redirect:/books";
+    }
+
+    @PatchMapping("/free/{id}")
+    public String free(@PathVariable Integer id){
+
+        System.out.println(id);
+        bookDAO.freeClient(id);
+        return "redirect:/books";
+    }
+
 }
